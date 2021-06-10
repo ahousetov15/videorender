@@ -54,11 +54,10 @@ venv:
 			python3 -m pip install --upgrade pip 
 			python3 -m pip install virtualenv
 		   	python3 -m venv env38
-			./poetryInstall.bash	
 
 runserver:
 			@# runserver - Start server application and kafka queur by python (localy).
-			python videorender/manage.py runserver
+			python3 videorender/manage.py runserver
 
 help:
 			@# help - Show this help.
