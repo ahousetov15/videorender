@@ -38,9 +38,18 @@ RUN apt-get update && apt-get upgrade -y \
     bash \
     build-essential \
     curl \
+    tar \
+    file \
+    xz-utils \
     gettext \
     git \
     libpq-dev \
+    ffmpeg \
+    imagemagick \
+    imagemagick-common \
+    libmagick++-dev \
+    python3-pythonmagick \
+    node-imagemagick \
     # Defining build-time-only dependencies:
     $BUILD_ONLY_PACKAGES \
   # Installing `dockerize` utility:
@@ -60,7 +69,8 @@ RUN apt-get update && apt-get upgrade -y \
   && apt-get remove -y $BUILD_ONLY_PACKAGES \
   # Cleaning cache:
   && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
-  && apt-get clean -y && rm -rf /var/lib/apt/lists/*
+  && apt-get clean -y \
+  && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /code
 
