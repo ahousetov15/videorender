@@ -18,10 +18,24 @@ from health_check import urls as health_urls
 
 from server.apps.main import urls as main_urls
 from server.apps.main.views import index
+from server.apps.video.urls import video_router
+from server.apps.render.urls import render_router
+from .router import MainRouter
+
 
 admin.autodiscover()
 
+
+
+api_router = MainRouter()
+api_router.extend(video_router)
+api_router.extend(render_router)
+
+
 urlpatterns = [
+    #API's:
+    path('api/', include(api_router.urls)),
+
     # Apps:
     path('main/', include(main_urls, namespace='main')),
 

@@ -38,9 +38,18 @@ RUN apt-get update && apt-get upgrade -y \
     bash \
     build-essential \
     curl \
+    tar \
+    file \
+    xz-utils \
     gettext \
     git \
     libpq-dev \
+    ffmpeg \
+    imagemagick \
+    imagemagick-common \
+    libmagick++-dev \
+    python3-pythonmagick \
+    node-imagemagick \
     # Defining build-time-only dependencies:
     $BUILD_ONLY_PACKAGES \
   # Installing `dockerize` utility:
@@ -60,22 +69,28 @@ RUN apt-get update && apt-get upgrade -y \
   && apt-get remove -y $BUILD_ONLY_PACKAGES \
   # Cleaning cache:
   && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
-  && apt-get clean -y && rm -rf /var/lib/apt/lists/*
+  && apt-get clean -y \
+  && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /code
 
 # This is a special case. We need to run this script as an entry point:
 COPY ./docker/django/entrypoint.sh /docker-entrypoint.sh
+COPY ./docker/ImageMagick-6/policy.xml /etc/ImageMagick-6/policy.xml
+
 
 # Setting up proper permissions:
 RUN chmod +x '/docker-entrypoint.sh' \
   && groupadd -r web && useradd -d /code -r -g web web \
   && chown web:web -R /code \
   && mkdir -p /var/www/django/static /var/www/django/media \
-  && chown web:web /var/www/django/static /var/www/django/media
+  && mkdir -p /var/www/django/media/video /var/www/django/media/background /var/www/django/media/render \
+  && chown web:web -R /var/www/django/static /var/www/django/media \
+  && chmod -R 777 /var /code
 
 # Copy only requirements, to cache them in docker layer
 COPY --chown=web:web ./poetry.lock ./pyproject.toml /code/
+
 
 # Project initialization:
 RUN echo "$DJANGO_ENV" \
@@ -87,8 +102,11 @@ RUN echo "$DJANGO_ENV" \
   # Cleaning poetry installation's cache for production:
   && if [ "$DJANGO_ENV" = 'production' ]; then rm -rf "$POETRY_CACHE_DIR"; fi
 
-# Running as non-root user:
-USER web
+# Need to copy backgeound image to media directory
+COPY ./background/background.jpg /var/www/django/media/background/background.jpg
+
+## Running as non-root user:
+#USER web
 
 # We customize how our app is loaded with the custom entrypoint:
 ENTRYPOINT ["tini", "--", "/docker-entrypoint.sh"]

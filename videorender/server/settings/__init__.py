@@ -22,18 +22,30 @@ django_stubs_ext.monkeypatch()
 environ.setdefault('DJANGO_ENV', 'development')
 _ENV = environ['DJANGO_ENV']
 
-_base_settings = (
-    'components/common.py',
-    'components/logging.py',
-    'components/csp.py',
-    'components/caches.py',
+if 'local' in _ENV:
+    _base_settings = (
+        'components/common.py',
+        'components/logging.py',
+        'components/csp.py',
+        'components/caches.py',
 
-    # Select the right env:
-    'environments/{0}.py'.format(_ENV),
+        # Select the right env:
+        #'environments/{0}.py'.format(_ENV),
+        'environments/development.py',
 
-    # Optionally override some settings:
-    optional('environments/local.py'),
-)
+        # Optionally override some settings:
+        optional('environments/local.py'),
+    )
+else:
+    _base_settings = (
+        'components/common.py',
+        'components/logging.py',
+        'components/csp.py',
+        'components/caches.py',
+
+        # Select the right env:
+        'environments/{0}.py'.format(_ENV),
+    )
 
 # Include settings:
 include(*_base_settings)

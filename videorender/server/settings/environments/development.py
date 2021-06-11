@@ -26,13 +26,14 @@ ALLOWED_HOSTS = [
     '[::1]',
 ]
 
+MEDIA_ROOT = '/var/www/django/media'
 
 # Installed apps for development only:
 
 INSTALLED_APPS += (
     # Better debug:
     'debug_toolbar',
-    'nplusone.ext.django',
+    #'nplusone.ext.django',
 
     # Linting migrations:
     'django_migration_linter',
@@ -48,6 +49,9 @@ INSTALLED_APPS += (
 
     # django-extra-checks:
     'extra_checks',
+
+    #third party
+    'rest_framework'
 )
 
 
@@ -90,17 +94,17 @@ CSP_CONNECT_SRC = ("'self'",)
 # https://github.com/jmcarp/nplusone
 
 # Should be the first in line:
-MIDDLEWARE = (  # noqa: WPS440
-    'nplusone.ext.django.NPlusOneMiddleware',
-) + MIDDLEWARE
+# MIDDLEWARE = (  # noqa: WPS440
+#     'nplusone.ext.django.NPlusOneMiddleware',
+# ) + MIDDLEWARE
 
-# Logging N+1 requests:
-NPLUSONE_RAISE = True  # comment out if you want to allow N+1 requests
-NPLUSONE_LOGGER = logging.getLogger('django')
-NPLUSONE_LOG_LEVEL = logging.WARN
-NPLUSONE_WHITELIST = [
-    {'model': 'admin.*'},
-]
+# # Logging N+1 requests:
+# NPLUSONE_RAISE = True  # comment out if you want to allow N+1 requests
+# NPLUSONE_LOGGER = logging.getLogger('django')
+# NPLUSONE_LOG_LEVEL = logging.WARN
+# NPLUSONE_WHITELIST = [
+#     {'model': 'admin.*'},
+# ]
 
 
 # django-test-migrations
