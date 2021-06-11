@@ -95,20 +95,20 @@ class RenderReadView(viewsets.ReadOnlyModelViewSet):
 
     @action(methods=['get'],
             detail=False,
-            url_path='check/(?P<pk>\d+)',
-            url_name='check')
-    def check(self, request, pk):
+            url_path='draw/(?P<pk>\d+)',
+            url_name='draw')
+    def draw(self, request, pk):
         if Render.objects.filter(source=pk).exists():
             #instance = Render.objects.filter(source=pk)
-            return Response(f'Found render with count={pk}!', status.HTTP_302_FOUND)
+            return Response(f'Found render with by {pk}!', status.HTTP_302_FOUND)
         else:
             if not Video.objects.filter(pk=pk).exists():
-                return Response(f'No video with id ={pk}', status=status.HTTP_404_NOT_FOUND)
+                return Response(f'No video with id == {pk}', status=status.HTTP_404_NOT_FOUND)
             else:
                 try:
                     instance = Video.objects.get(pk=pk)
                     inmemoryfile = self.create_render(instance=instance, source=pk)
-                    return Response(f'Render by id={pk}, was created.', status=status.HTTP_201_CREATED)
+                    return Response(f'Render by key {pk}, was created!', status=status.HTTP_201_CREATED)
                 except ValidationError as ve:
                     return Response(f'Invalid data:{ve}', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                 except AssertionError as ae:
